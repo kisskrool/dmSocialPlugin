@@ -1,0 +1,8 @@
+System:
+  Security:
+    dmSocialConnect:
+      name: "Social Connect"
+      admin: false
+      front: true
+      components:
+        signin:

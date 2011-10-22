@@ -1,0 +1,24 @@
+all:
+  social:
+    create_user: true
+    facebook:
+      key: my_api_key
+      secret: application_secret
+      callback: @homepage
+      scope: [email]
+
+      user:
+        username:
+          call: me
+          path: id
+          prefix: Facebook_
+        prenom:
+          call: me
+          path: first_name
+        nom:
+          call: me
+          path: last_name
+        email:               
+          call: me
+          path: email               
+          key: true

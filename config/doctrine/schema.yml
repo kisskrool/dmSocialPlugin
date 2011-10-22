@@ -1,0 +1,21 @@
+DmSocialToken:
+  columns:
+    name: {type: string(127)}
+    token_key: {type: clob}
+    token_secret: {type: clob}
+    user_id: {type: integer}
+    expire: {type: integer}
+    params: {type: clob}
+    identifier: {type: string(255)}
+    status: {type: string(127)}
+    o_auth_version: {type: string(15)}
+  relations: 
+    DmUser:
+      class: DmUser
+      local: user_id
+      foreign: id
+      foreignAlias: SocialTokens
+      onDelete: CASCADE
+      onUpdate: CASCADE
+  actAs:
+    Timestampable:

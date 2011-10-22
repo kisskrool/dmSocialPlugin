@@ -1,0 +1,7 @@
+social_access:
+  url: /access/:service
+  param: { module: dmSocial, action: access }
+
+social_connect:
+  url: /socialconnect/:service
+  param: { module: dmSocialConnect, action: connect }
