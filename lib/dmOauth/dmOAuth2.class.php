@@ -72,9 +72,10 @@ class dmOAuth2 extends dmOAuth
 
     $this->addAccessParameters($parameters);
 
-    $params = $this->call($url, $this->getAccessParameters(), null, 'GET');
+    $params = $this->call($url, $this->getAccessParameters(), null, 'POST');
 
-    $params = OAuthUtil::parse_parameters($params);
+//    $params = OAuthUtil::parse_parameters($params);
+    $params = json_decode($params, true);
 
     $access_token = isset($params['access_token'])?$params['access_token']:null;
 
