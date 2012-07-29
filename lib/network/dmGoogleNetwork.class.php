@@ -1,5 +1,5 @@
 <?php
-class dmGoogleNetwork extends dmSocial1
+class dmGoogleNetwork extends dmSocial2
 {
   protected static $apis = array(
                                   'analytics' => 'http://www.google.com/analytics/feeds/',
@@ -19,9 +19,12 @@ class dmGoogleNetwork extends dmSocial1
                                   'open_social' => 'http://www-opensocial.googleusercontent.com/api/people/',
                                   'orkut' => 'http://www.orkut.com/social/rest',
                                   'picasa' => 'http://picasaweb.google.com/data/',
+                                  'plus' => 'https://www.googleapis.com/plus/v1',
                                   'sidewiki' => 'http://www.google.com/sidewiki/feeds/',
                                   'sites' => 'http://sites.google.com/feeds/',
                                   'spreadsheets' => 'http://spreadsheets.google.com/feeds/',
+                                  'userinfo' => 'https://www.googleapis.com/userinfo',
+                                  'oauth2' => 'https://www.googleapis.com/oauth2/v1',
                                   'wave' => 'http://wave.googleusercontent.com/api/rpc',
                                   'webmaster_tools' => 'http://www.google.com/webmasters/tools/feeds/',
                                   'youtube' => 'http://gdata.youtube.com'
@@ -29,19 +32,19 @@ class dmGoogleNetwork extends dmSocial1
 
   protected function initialize($config)
   {
-    $this->setRequestTokenUrl('https://www.google.com/accounts/OAuthGetRequestToken');
-    $this->setRequestAuthUrl('https://www.google.com/accounts/OAuthAuthorizeToken');
-    $this->setAccessTokenUrl('https://www.google.com/accounts/OAuthGetAccessToken');
+    $this->setRequestAuthUrl('https://accounts.google.com/o/oauth2/auth');
+    $this->setAccessTokenUrl('https://accounts.google.com/o/oauth2/token');
 
     $this->setNamespace('default', 'http://www.google.com');
     $this->addNamespaces(self::$apis);
     $this->setCallParameter('alt', 'json');
+    $this->setAuthParameter('response_type', 'code');
+    $this->setAccessParameter('grant_type', 'authorization_code');
     $this->setAlias('contacts', 'm8/feeds/contacts');
-    $this->setAlias('me', 'default/full');
 
     if(isset($config['scope']))
     {
-      $this->setRequestParameter('scope', implode(' ', $config['scope']));
+      $this->setAuthParameter('scope', implode(' ', $config['scope']));
     }
 
     $this->init($config, 'api', 'use');
@@ -58,9 +61,9 @@ class dmGoogleNetwork extends dmSocial1
     }
     else
     {
-      if(strlen($this->getRequestParameter('scope')) > 0)
+      if(strlen($this->getAuthParameter('scope')) > 0)
       {
-        $scope = explode(' ', $this->getRequestParameter('scope'));
+        $scope = explode(' ', $this->getAuthParameter('scope'));
       }
       else
       {
@@ -70,7 +73,7 @@ class dmGoogleNetwork extends dmSocial1
       $scope[] = $this->getScopeByApiName($api);
       $scope = array_unique($scope);
 
-      $this->setRequestParameter('scope', implode(' ', $scope));
+      $this->setAuthParameter('scope', implode(' ', $scope));
     }
   }
 
@@ -79,5 +82,17 @@ class dmGoogleNetwork extends dmSocial1
     $api = strtolower($api);
 
     return self::$apis[$api];
+  }
+  
+  public function getIdentifier()
+  {
+    $prevNs = $this->getCurrentNamespace();  
+    if ($data = $this->ns('oauth2')->get('userinfo')) {
+      $return = $data->id;
+    } else {
+      $return = null;
+    }
+    $this->ns($prevNs);
+    return $return;
   }
 }

@@ -106,12 +106,12 @@ class dmSocialUser extends dmCoreUser
 
   /**
    *
-   * @param Token $token
+   * @param DmSocialToken $token
    *
    * Add a token to the user
    *
    */
-  public function addToken($token)//new method
+  public function addToken(DmSocialToken $token)//new method
   {
     $service = $token->getName();
     $status = $token->getStatus();
