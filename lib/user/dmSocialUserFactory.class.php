@@ -49,14 +49,14 @@ class dmSocialUserFactory
     $user = new DmUser();
 
     $config = $this->getConfig();
-
+    
     $modified = false;
 
     $last_call = null;
     $last_result = null;
     foreach($config as $field => $field_config)
     {
-      list($call, $call_parameters, $path, $prefix, $suffix) = $this->explodeConfig($field_config);
+      list($call, $call_parameters, $path, $prefix, $suffix, $ns) = $this->explodeConfig($field_config);
 
       if(!is_null($call))
       {
@@ -66,7 +66,7 @@ class dmSocialUserFactory
         }
         else
         {
-          $result = $this->getService()->get($call, $call_parameters);
+          $result = $this->getService()->ns($ns)->get($call, $call_parameters);
           $last_result = $result;
           $last_call = $call;
         }
@@ -102,6 +102,7 @@ class dmSocialUserFactory
     $path = '';
     $prefix = '';
     $suffix = '';
+    $ns = 'default';
 
     if(is_array($config))
     {
@@ -110,13 +111,14 @@ class dmSocialUserFactory
       $path = isset($config['path'])?$config['path']:null;
       $prefix = isset($config['prefix'])?$config['prefix']:null;
       $suffix = isset($config['suffix'])?$config['suffix']:null;
+      $ns = isset($config['namespace'])?$config['namespace']:'default';
     }
     else
     {
       $call = $config;
     }
 
-    return array($call, $call_parameters, $path, $prefix, $suffix);
+    return array($call, $call_parameters, $path, $prefix, $suffix, $ns);
   }
 
   public function getKeys()
